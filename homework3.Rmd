@@ -337,8 +337,30 @@ UN_GDP_data  <-  read_excel(here::here("data", "Download-GDPconstant-USD-countri
 
 ```{r reshape_GDP_data, eval=FALSE}
 
-tidy_GDP_data  <-  ?????????????????????????
+# Create long form data
+tidy_GDP_data <- UN_GDP_data %>%
+  mutate(Shortind = gsub("\\s*\\([^\\)]+\\)","",as.character(IndicatorName))) %>% #Remove all characters after "(", inclusive
+  mutate(Ind_id = gsub("\\b(\\pL)\\pL{2,}|.", "\\U\\1", as.character(Shortind), perl = TRUE)) %>% #Remove all characters after first letter of each word
+  relocate(Ind_id, .after = Shortind) %>%
+  pivot_longer(-c(CountryID, Country, IndicatorName, Shortind, Ind_id), names_to = "Year", values_to = "Values") %>% 
+  mutate(Values = Values / 1e9) %>% 
+  mutate(Year = as.numeric(Year))
 
+# Check that length of unique indicators list matches that of unique short indicators list
+indicators <- unique(tidy_GDP_data$IndicatorName)
+shortindicators <- unique(tidy_GDP_data$Shortind)
+ind_id <- unique(tidy_GDP_data$Ind_id)
+
+# Create Ind_id to IndicatorName reference table
+Indicators_table <- as.data.frame(cbind(ind_id, indicators))
+
+# Check for obserevations with NA values
+tidy_GDP_data %>%
+  summarise_all(~sum(is.na(.))) %>% 
+  gather() %>% 
+  arrange(desc(value))
+
+# Cursory glance
 glimpse(tidy_GDP_data)
 
 
@@ -354,6 +376,42 @@ knitr::include_graphics(here::here("images", "gdp1.png"), error = FALSE)
 ```
 
 
+```{r GDP Components over time for 3 countries}
+
+variables_of_interest <- c("GCF", "EGAS", "GGFCE", "HCE", "IGAS")
+
+variables_with_descrip <-Indicators_table %>% 
+  filter(ind_id %in% variables_of_interest )
+  
+
+df <- tidy_GDP_data %>%
+  select(-c(IndicatorName, Shortind)) %>% 
+  filter(Country %in% country_list) %>% 
+  filter(Ind_id %in% variables_of_interest)
+
+
+ggplot(df, aes(x = Year, y = Values, group = Ind_id, colour = factor(Ind_id))) +
+  geom_line() +
+  facet_wrap(~ Country) +
+  labs(title = "GDP components over time", subtitle = "In constant 2010 USD",x = "Year", y = "Billion US$") +
+  scale_colour_discrete(name = "Components of GDP", labels = c("Exports", "Gross Capital Formation", "Government Expenditure", "Houesehold Expenditure", "Imports")) +
+  theme_light() +
+  theme(plot.title = element_text(size = 14, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        axis.text.x = element_text(angle = 90),
+        strip.text.x = element_text(size = 10)) +
+  theme(legend.key.size = unit(0.5, 'cm'), #change legend key size
+        legend.key.height = unit(0.5, 'cm'), #change legend key height
+        legend.key.width = unit(0.5, 'cm'), #change legend key width
+        legend.title = element_text(size=10), #change legend title font size
+        legend.text = element_text(size=8), #change legend text font size
+        legend.position = "right")
+
+```
+
+
 Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in your dataframe, I would like you to calculate it given its components discussed above.
 
 > What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?
@@ -363,6 +421,46 @@ Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*),
 knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
 ```
 
+```{r gdp2 replicate}
+
+variables_of_interest2 <- c("GCF", "EGAS", "GGFCE", "HCE", "IGAS","GDP")
+variables_proportion <- c("GCF_proportion", "HCE_proportion", "GGFCE_proportion", "NE_proportion", "GDP_delta_proportion")
+
+manual_GDP_df <- tidy_GDP_data %>%
+  select(-c(IndicatorName, Shortind)) %>%
+  filter(Country %in% country_list) %>% 
+  filter(Ind_id %in% variables_of_interest2) %>% 
+  pivot_wider(names_from = Ind_id, values_from = Values) %>%
+  mutate(NE = EGAS - IGAS) %>%
+  mutate(GDP_manual = GCF + GGFCE + HCE + NE) %>% #Create GDP column by manually adding components
+  mutate(GDP_delta = GDP_manual - GDP) %>% 
+  mutate_at(vars(HCE, GGFCE, GCF, NE, GDP_delta), funs(proportion = . / GDP * 100)) %>%
+  pivot_longer(cols = -c(CountryID, Country, Year), names_to = "Ind_id", values_to = "Values") %>%
+  filter(Ind_id %in% variables_proportion)
+
+# Plot each GDP component's % composition of GDP over time
+# Plot also includes a line that shows the % difference between what we calculated as GDP and the GDP figure included in the dataframe
+ggplot(manual_GDP_df, aes(x = Year, y = Values, group = Ind_id, colour = factor(Ind_id))) +
+  geom_line() +
+  facet_wrap(~ Country) +
+  labs(title = "GDP and its breakdown over time", subtitle = "In constant 2010 USD",x = "Year", y = "Proportion") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  scale_colour_discrete(name = "Components of GDP", labels = c("Gross Capital Formation", "GDP % difference", "Government Expenditure", "Houesehold Expenditure", "Net Exports")) +
+  theme_light() +
+  theme(plot.title = element_text(size = 14, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        axis.text.x = element_text(angle = 90),
+        strip.text.x = element_text(size = 10)) +
+  theme(legend.key.size = unit(0.5, 'cm'), #change legend key size
+        legend.key.height = unit(0.5, 'cm'), #change legend key height
+        legend.key.width = unit(0.5, 'cm'), #change legend key width
+        legend.title = element_text(size=10), #change legend title font size
+        legend.text = element_text(size=8), #change legend text font size
+        legend.position = "right")
+  
+```
 
 
 > What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries? 
