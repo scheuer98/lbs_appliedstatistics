@@ -307,9 +307,6 @@ plot_df <- brexit_results %>%
                names_to = "Party",
                values_to = "Party_share")
 
-
-knitr::include_graphics(here::here("images", "brexit.png"), error = FALSE)
-
 ggplot(data = plot_df, aes(x = Party_share, y = leave_share, colour = Party)) +
   geom_point(size = 0.2) + 
   geom_lm(interval = "confidence") +
@@ -327,9 +324,9 @@ ggplot(data = plot_df, aes(x = Party_share, y = leave_share, colour = Party)) +
 
 ```
 
+[**NOTE:**]{.underline}
 
-
-
+The plot shows several interesting patterns. Generalizing conclusions should made cautiously which is why especially the relationship of the parliament constituencies' share of votes for the labour and/or conservative party and the corresponding leave share votes should not be over interpreted. However, the stronger trends for the Liberal Democrats as well as the Independent Party may show some interesting tendencies. While parliament constituencies in which the vote share for the Liberal Democrats was relatively low showed above 50% vote shares for Brexit, this vote share quickly depletes as the share of Liberal Democrats affiliation increases. An inverse relation with stronger magnitude is to be observed for the UKIP. In underrepresented parliament constituencies the vote share to leave the EU was relatively low but strongly increases as the affiliation to the UKIP grows. At around 20% representation of the UKIP in the parliament constituencies the vote shares were up to 75%. This finding should not come as a suprise, as the main campaign positions of the UKIP was to be independent of the EU whereas the Liberal Democrats campaigned to stay.
 
 # Challenge 2:GDP components over time and among countries
 
@@ -423,7 +420,6 @@ ggplot(df, aes(x = Year, y = Values, group = Ind_id, colour = factor(Ind_id))) +
 
 ```
 
-
 Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in your dataframe, I would like you to calculate it given its components discussed above.
 
 > What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?
@@ -475,10 +471,7 @@ ggplot(manual_GDP_df, aes(x = Year, y = Values, group = Ind_id, colour = factor(
   
 ```
 
-
-> What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries? 
-
-
+> What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?
 
 > If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
 
