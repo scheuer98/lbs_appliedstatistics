@@ -324,15 +324,12 @@ ggplot(data = plot_df, aes(x = Party_share, y = leave_share, colour = Party)) +
         axis.text = element_text(size = 8),
         strip.text.x = element_text(size = 8),
         legend.position = "bottom")
-  
-
-# #0087DC - conservative 
-# UKIP - #6D3177
-# Lib Dems - #FAA61A
-# Labour - #E4003B
-
 
 ```
+
+
+
+
 
 # Challenge 2:GDP components over time and among countries
 
@@ -391,9 +388,6 @@ First, can you produce this plot?
 knitr::include_graphics(here::here("images", "gdp1.png"), error = FALSE)
 ```
 
-<<<<<<< HEAD
-=======
-
 ```{r GDP Components over time for 3 countries}
 
 variables_of_interest <- c("GCF", "EGAS", "GGFCE", "HCE", "IGAS")
@@ -430,7 +424,6 @@ ggplot(df, aes(x = Year, y = Values, group = Ind_id, colour = factor(Ind_id))) +
 ```
 
 
->>>>>>> aff22bc7beaddc4fd1aaed6515a811740045334e
 Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in your dataframe, I would like you to calculate it given its components discussed above.
 
 > What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?
@@ -439,9 +432,8 @@ Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*),
 knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
 ```
 
-<<<<<<< HEAD
 > What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?
-=======
+
 ```{r gdp2 replicate}
 
 variables_of_interest2 <- c("GCF", "EGAS", "GGFCE", "HCE", "IGAS","GDP")
@@ -486,7 +478,7 @@ ggplot(manual_GDP_df, aes(x = Year, y = Values, group = Ind_id, colour = factor(
 
 > What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries? 
 
->>>>>>> aff22bc7beaddc4fd1aaed6515a811740045334e
+
 
 > If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
 
