@@ -296,7 +296,7 @@ skim(brexit_results)
 #we want to have an overview of how the percentage of the party affilitation is related to the percentage in the brexit voting share. Therefore, we want to create a long table that displays the voting percentage per parliament constituency
 
 #only select the most important information
-plot_df <- brexit_results %>% 
+brexit_results_plot_df <- brexit_results %>% 
   select(-c(born_in_uk, male, unemployed, degree, age_18to24)) %>% 
   #create a longer format dataset
   rename (Conservative = con_2015,
@@ -307,7 +307,7 @@ plot_df <- brexit_results %>%
                names_to = "Party",
                values_to = "Party_share")
 
-ggplot(data = plot_df, aes(x = Party_share, y = leave_share, colour = Party)) +
+ggplot(data = brexit_results_plot_df, aes(x = Party_share, y = leave_share, colour = Party)) +
   geom_point(size = 0.2) + 
   geom_lm(interval = "confidence") +
   scale_colour_manual(values = c("#0087DC", "#E4003B", "#FAA61A", "#6D3177"), name="") +
@@ -346,7 +346,7 @@ The first thing you need to do is to tidy the data, as it is in wide format and 
 
 > make sure you remove `eval=FALSE` from the next chunk of R code-- I have it there so I could knit the document
 
-```{r reshape_GDP_data, eval=FALSE}
+```{r reshape_GDP_data}
 
 # Create long form data
 tidy_GDP_data <- UN_GDP_data %>%
@@ -424,12 +424,6 @@ Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*),
 
 > What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?
 
-```{r gdp2, echo=FALSE, out.width="100%"}
-knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
-```
-
-> What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?
-
 ```{r gdp2 replicate}
 
 variables_of_interest2 <- c("GCF", "EGAS", "GGFCE", "HCE", "IGAS","GDP")
@@ -471,9 +465,35 @@ ggplot(manual_GDP_df, aes(x = Year, y = Values, group = Ind_id, colour = factor(
   
 ```
 
+[**NOTE:**]{.underline}
+
+As the graphs show, there is a small, but undeniable difference between the sum of all GDP components and the UN reported total GDP value. This might be surprising at first, but as clarified earlier, the calculation of the GDP as the sum of government spending, consumption, investments plus the net exports is rather of a simplistic nature. Simultaneously, it is very difficult to estimate the exact values for each individual component of GDP. We believe that in order to calculate the various components, the UN might have used adjusted values for a better estimate. Similarly, to not be effected by the many assumptions made to calculate the individual components, the UN might have opted to extrapolate the GDP total value based on a different, more rigorous approach.
+
+The graphs do hint at another anomaly. There is a clear difference between the countries in terms of the accuracy of the sum of GDP's components and the UN's reported GDP value. Whilst it seems as if the values for Germany and the United Stated have aligned with the reported GDP amount, the GDP estimate for India remains different until the present day. This might be down to the relatively high quality of data for Germany's and the USA's economy as opposed to the data on India's economy. Therefore, the UN might have been forced to fall back on assumptions and estimations that lead to less accurate representations of the true values.
+
+```{r gdp2, out.width="100%"}
+knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
+```
+
 > What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?
 
+These graphs depict some noteworthy differences, similarities and trends. For all three countries, though very different, there is a strong tendency for the trade balance/ net exports to play a small part in the the countries GDP share. However, this does not imply that there are not significant differences in the magnitude of the im- and exports between these countries. Though, it does hint at the fact that despite all three countries having a strong industry (India's natural resources and tech sector, Germany's automobile and chemical industry and USA's oil and automobile sector) all strongly depend on foreign goods to cover their domestic demand. Therefore the net exports' GDP share are almost negligible. Only Germany, who has been up-scaling their exporting of automobiles to eastern countries and especially China has been realizing a positively developing share of net exports.
+
+In the meantime, household spending makes up the largest share of GDP for all countries around the 60% mark. While Germany and the USA have been steady in this area for the last few decades, India has realized a 15% drop in its share. This might be down to an increasing share of household finances being used to spend on foreign goods as the middle class in India grows. Another explanation might be that through the relatively stronger increase in other components of the GDP the household expenditures' share decreases a result.
+
+The investments in India are an exemplary increase that might have caused the share of household expenditures to decrease. India's size and resources make it an interesting trade partner for many other global powers and throughout the last 20 years India has felt an increasing investment in its country. This is observable in especially its tech sector and infrastructure. The growth of companies such as SPAN Infotech and Tata as well foreign investment by China through its silk road initiative are driving forces in this trend.
+
+The government expenditure on the other hand is relatively low in India. USA and Germany have witnessed around 10% higher government expenditure relative to their GDP, as they have more established governmental structures and tax systems as well as social benefit systems that allow as well as require for higher relative government expenditure, respectively.
+
 > If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
+
+```{r gdp2, out.width="100%"}
+knitr::include_graphics(here::here("Rplot.png"), error = FALSE)
+```
+
+The countries above have been chosen based on some of the nationalities of our group members.
+
+The first observation is that the differences between the Netherlands and Germany are close to non-existent. Not only are the components' shares similar, but the tends over the last 50 years are remarkably close: The share of net exports have been steadily increasing from around 0% to 10%, the government expenditure and gross capital formation have been around the 20 year mark and household expenditures have been steadily decreasing.
 
 # Deliverables
 
