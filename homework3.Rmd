@@ -79,13 +79,11 @@ yrbss %>%
 
 ```
 
+We have 1004 missing values in weight. The lowest weight is 30kgs and highest weight is 181 kgs. The mean weight of the class is 68kgs and median weight is 64kgs. We can see that Q3 is 76kgs. That means 75% of the weights are between 30kgs and 76kgs. As per the histogram, it's clear that the remaining 25% of the data is really spread between 76kgs and 181kgs. This is evident in the skewness of the graph. It is right skewed and mean is larger than the median. It gives us an indication that there are some outliers that have increased the value of the mean.
 
-We have 1004 missing values in weight.  The lowest weight is 30kgs and highest weight is 181 kgs. The mean weight of the class is 68kgs and median weight is 64kgs. We can see that Q3 is 76kgs. That means 75% of the weights are between 30kgs and 76kgs. As per the histogram, it's clear that the remaining 25% of the data is really spread between 76kgs and 181kgs. This is evident in the skewness of the graph. It is right skewed and mean is larger than the median. It gives us an indication that there are some outliers that have increased the value of the mean. 
+Next, consider the possible relationship between a high schooler's weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
 
-
-Next, consider the possible relationship between a high schooler’s weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
-
-Let’s create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. Use the `count()` function and see if you get the same results as `group_by()... summarise()`
+Let's create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. Use the `count()` function and see if you get the same results as `group_by()... summarise()`
 
 Next, consider the possible relationship between a high schooler's weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
 
@@ -135,7 +133,7 @@ p_hat = count_yesorno[1,2]/(count_yesorno[1,2]+count_yesorno[2,2])
 p_hat =as.vector(p_hat)
 p_hat
 
-s=sqrt((p_hat*(1-p_hat))
+s=sqrt((p_hat*(1-p_hat)))
 ```
 
 ## Confidence Interval
@@ -539,13 +537,15 @@ The government expenditure on the other hand is relatively low in India. USA and
 
 > If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
 
-```{#{r gdp2, out.width="100%"}
+```{r gdp2, out.width="100%"}
 knitr::include_graphics(here::here("Rplot.png"), error = FALSE)
 ```
 
 The countries above have been chosen based on some of the nationalities of our group members.
 
-The first observation is that the differences between the Netherlands and Germany are close to non-existent. Not only are the components' shares similar, but the tends over the last 50 years are remarkably close: The share of net exports have been steadily increasing from around 0% to 10%, the government expenditure and gross capital formation have been around the 20 year mark and household expenditures have been steadily decreasing.
+The first observation is that the differences between the Netherlands and Germany are close to non-existent. Not only are the components' shares similar, but the tends over the last 50 years are remarkably close: The share of net exports have been steadily increasing from around 0% to 10%, the government expenditure and gross capital formation have been around the 20 % mark and household expenditures have been steadily decreasing. This is where the only notable difference between the two countries lies and as the share of GDP based on household expenditures has been consistently 5-10 percentage points lower in the Dutch as opposed to the German economy.
+
+The share distribution of the components for China are very much different to what could be observed for the two western European countries. The largest differences are in the share of government expenditure, gross capital formation and household expenditure. While the level of government expenditure is consistently lower than for its European counterparts, China's GDP share of investment and household expenditure seem to have traded shares over the last 5 decades with investments on the rise especially in the last 20 years and the GDP share of household expenditures almost falling 20 percentage points. It is no groundbreaking finding, that China's level of investments, both domestic and international has skyrocketed in the last 20 years, but the magnitude is astonishing. Especially considering the ever growing wealth and middle class in China would hint at the fact that household expenditures should increase tremendously. Yet still, investments in China strongly out way this trend as China has grown to be a country with among the fastest growing infrastructure and conglomerates.
 
 # Deliverables
 
