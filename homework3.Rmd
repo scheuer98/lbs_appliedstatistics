@@ -487,7 +487,7 @@ The government expenditure on the other hand is relatively low in India. USA and
 
 > If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
 
-```{r gdp2, out.width="100%"}
+```{#{r gdp2, out.width="100%"}
 knitr::include_graphics(here::here("Rplot.png"), error = FALSE)
 ```
 
