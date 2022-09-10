@@ -87,7 +87,6 @@ Next, consider the possible relationship between a high schooler’s weight and 
 
 Let’s create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. Use the `count()` function and see if you get the same results as `group_by()... summarise()`
 
-[[[[unable to find %]]]]
   
 =======
 Next, consider the possible relationship between a high schooler's weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
@@ -97,26 +96,26 @@ Let's create a new variable in the dataframe `yrbss`, called `physical_3plus` , 
 >>>>>>> 569dfad99f8914a56253cd2b8ac8839faed24e9c
 ```{r, mutate_and_count}
 #Adding a new column to represent those who do physical activity for atleast 3 days a week
-yrbss3plus <- yrbss %>%
+
+yrbss <- yrbss %>%
     mutate( physical_3plus = ifelse(physically_active_7d>3, "Yes","No"))
 
-yrbss3plus
+yrbss
 
 #Counting number of yes and no using groupby and summarise
 count_yesorno <- yrbss3plus %>%
   drop_na(physical_3plus) %>%
   group_by(physical_3plus) %>%
   summarize( count_physical_3plus = n())%>%
-  mutate(frequency = count_physical_3plus / sum(count_physical_3plus), frequency = parse_number(scales::percent(frequency)))%>%
+  mutate(percentage = count_physical_3plus / sum(count_physical_3plus), percentage = parse_number(scales::percent(percentage)))
 
 count_yesorno
   
 #counting using count function
-yrbss3plus %>%
+yrbss %>%
   drop_na(physical_3plus) %>%
   count(physical_3plus)
     
-  mutate(activity3 = )
 
 
 ```
@@ -127,19 +126,28 @@ Make a boxplot of `physical_3plus` vs. `weight`. Is there a relationship between
 
 ```{r, boxplot}
 #confidence interval calculation
-
-yrbss3plus %>%
-  drop_na(physical_3plus) %>%
-  count(physical_3plus) %>%
-  n = sum(count_physical_3plus)
-
-
+n= count_yesorno[1,2]+count_yesorno[2,2]
+n
 
 p_hat = count_yesorno[1,2]/(count_yesorno[1,2]+count_yesorno[2,2])
-p_hat =as.vector(p_hat)
+p_hat = as.vector(p_hat)
 p_hat
 
-s=sqrt((p_hat*(1-p_hat))
+one_df <- data.frame(1)
+one_df
+
+one_minus_p_hat = one_df - p_hat
+one_minus_p_hat
+
+numerator= sqrt(p_hat*(one_minus_p_hat))
+numerator
+
+s= numerator[1,1] / n[1,1]
+s
+
+two_sd <- data.frame(1.96)
+
+CI1 = p_hat- (two_sd * s)
 ```
 
 ## Confidence Interval
@@ -160,6 +168,8 @@ Write the null and alternative hypotheses for testing whether mean weights are d
 
 t.test(weight ~ physical_3plus, data = yrbss)
 ```
+Let x_bar_yes be the mean of students who exercise atleast 3 times a week. Let x_bar_no be the mean of students who exercise less than 3 times a week. We will define our null hypothesis as x_bar_yes - x_bar_no = 0. If the null hypothesis is true, it would signify that weight does not depend on exercise. Our alternative hypothesis would be that x_bar_yes != x_bar no. This would mean there is a relation between weight and exercise.
+
 
 ## Hypothesis test with `infer`
 
@@ -192,7 +202,7 @@ null_dist <- yrbss %>%
   
   # calculate statistic of difference, namely "diff in means"
   calculate(stat = "diff in means", order = c("yes", "no"))
-
+  
 ```
 
 Here, `hypothesize` is used to set the null hypothesis as a test for independence, i.e., that there is no difference between the two population means. In one sample cases, the null argument can be set to *point* to test a hypothesis relative to a point estimate.
