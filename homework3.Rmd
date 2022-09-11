@@ -65,16 +65,17 @@ Before you carry on with your analysis, it's is always a good idea to check with
 You will first start with analyzing the `weight` of participants in kilograms. Using visualization and summary statistics, describe the distribution of weights. How many observations are we missing weights from?
 
 ```{r, eda_on_weight}
+#Understanding the data
 skimr::skim(yrbss)
-
 summary(yrbss)
 
+#Plotting histogram of weight
 yrbss %>%
   ggplot(aes(x=weight))+
   geom_histogram()+
   theme_bw() +
   labs (
-    title = "Distribution of Weights"
+    title = "Distribution of Weights", y="Number of participants", x="Weight"
   )
 
 ```
@@ -95,15 +96,15 @@ Let's create a new variable in the dataframe `yrbss`, called `physical_3plus` , 
 
 >>>>>>> 569dfad99f8914a56253cd2b8ac8839faed24e9c
 ```{r, mutate_and_count}
-#Adding a new column to represent those who do physical activity for atleast 3 days a week
 
+#Adding a new column to represent those who do physical activity for atleast 3 days a week
 yrbss <- yrbss %>%
     mutate( physical_3plus = ifelse(physically_active_7d>3, "Yes","No"))
 
 yrbss
 
 #Counting number of yes and no using groupby and summarise
-count_yesorno <- yrbss3plus %>%
+count_yesorno <- yrbss %>%
   drop_na(physical_3plus) %>%
   group_by(physical_3plus) %>%
   summarize( count_physical_3plus = n())%>%
@@ -125,6 +126,23 @@ Can you provide a 95% confidence interval for the population proportion of high 
 Make a boxplot of `physical_3plus` vs. `weight`. Is there a relationship between these two variables? What did you expect and why?
 
 ```{r, boxplot}
+#Plotting boxplot of weight and physical activity atleast 3 days
+yrbss %>%
+drop_na(physical_3plus) %>%
+ggplot(aes(x=physical_3plus, y=weight))+
+geom_boxplot()+
+theme_bw() +
+  labs (
+    title = "Boxplot of weight vs physical activity", x="Phsyical activity atleast 3 days", y = "Weight"
+  )
+
+```
+
+## Confidence Interval
+
+Boxplots show how the medians of the two distributions compare, but we can also compare the means of the distributions using either a confidence interval or a hypothesis test. Note that when we calculate the mean, SD, etc. weight in these groups using the mean function, we must ignore any missing values by setting the `na.rm = TRUE`.
+
+```{r, ci_using_formulas}
 #confidence interval calculation
 n= count_yesorno[1,2]+count_yesorno[2,2]
 n
@@ -148,13 +166,6 @@ s
 two_sd <- data.frame(1.96)
 
 CI1 = p_hat- (two_sd * s)
-```
-
-## Confidence Interval
-
-Boxplots show how the medians of the two distributions compare, but we can also compare the means of the distributions using either a confidence interval or a hypothesis test. Note that when we calculate the mean, SD, etc. weight in these groups using the mean function, we must ignore any missing values by setting the `na.rm = TRUE`.
-
-```{r, ci_using_formulas}
 
 ```
 
