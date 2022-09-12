@@ -101,7 +101,7 @@ count_yesorno <- yrbss3plus %>%
   drop_na(physical_3plus) %>%
   group_by(physical_3plus) %>%
   summarize( count_physical_3plus = n())%>%
-  mutate(frequency = count_physical_3plus / sum(count_physical_3plus), frequency = parse_number(scales::percent(frequency)))%>%
+  mutate(frequency = count_physical_3plus / sum(count_physical_3plus), frequency = parse_number(scales::percent(frequency)))
 
 count_yesorno
   
