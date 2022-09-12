@@ -93,36 +93,19 @@ Next, consider the possible relationship between a high schooler's weight and th
 
 Let's create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. Use the `count()` function and see if you get the same results as `group_by()... summarise()`
 
-<<<<<<< HEAD
-Next, consider the possible relationship between a high schooler’s weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
-
-Let’s create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. Use the `count()` function and see if you get the same results as `group_by()... summarise()`
-
-
-Next, consider the possible relationship between a high schooler's weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
-
-Let's create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. RUse the `count()` function and see if you get the same results as `group_by()... summarise()`
-
 ```{r, mutate_and_count}
 
 #Adding a new column to represent those who do physical activity for atleast 3 days a week
 yrbss <- yrbss %>%
-    mutate( physical_3plus = ifelse(physically_active_7d>3, "Yes","No"))
+    mutate( physical_3plus = ifelse(physically_active_7d >=3, "Yes","No"))
 
 yrbss
-
-#Adding a new column to represent those who do physical activity for atleast 3 days a week
-yrbss <- yrbss %>%
-  mutate(physical_3plus = ifelse(physically_active_7d >=3, "yes", "no"))
   
 #Counting number of yes and no using groupby and summarise
 count_yesorno <- yrbss %>%
   drop_na(physical_3plus) %>%
   group_by(physical_3plus) %>%
-  summarize( count_physical_3plus = n())%>%
-
-  mutate(frequency = count_physical_3plus / sum(count_physical_3plus), frequency = parse_number(scales::percent(frequency)))
-
+  summarize(count_physical_3plus = n())%>%
   mutate(percentage = count_physical_3plus / sum(count_physical_3plus), percentage = parse_number(scales::percent(percentage)))
 
 count_yesorno
@@ -136,43 +119,65 @@ yrbss %>%
 
 Can you provide a 95% confidence interval for the population proportion of high schools that are *NOT* active 3 or more days per week?
 
+**NOTE:**
+
+We are 95% confident that the proportion of participants that are not active for 3 or more days is within the lower bound of 0.3229 and the upper bound 0.3389.
+
 Make a boxplot of `physical_3plus` vs. `weight`. Is there a relationship between these two variables? What did you expect and why?
+
+We observe that there is a small positive relationship between weight and the amount of days physically active within a week. However, the difference in distribution is only minor. We conducted a small sanity check by means of calculating means and creating a best fit line plot. This confirmed that in fact the relationship between weight and physical activity is indeed small.
+
+These findings are rather surprising! The intuition of our group was that people that are more physically active would weigh less. However, on second thought, there might be many other factors contributing to to the weight of a person apart from physical activity (e.g. diet, age, ect.). Physically active people might burn more calories, tough gain muscle weight.
 
 ```{r, boxplot}
 
+#confidence interval calculation for a binomial
+# we would like to get the SE by using the formula SE = srt(p(1-p)/n)
+# obtain the n
+n = count_yesorno[1,2]+count_yesorno[2,2]
+n <- n$count_physical_3plus
+
+#calculate the proportion of population that works out less than 3 days a week
+p_hat <- count_yesorno[1,2]/(count_yesorno[1,2]+count_yesorno[2,2])
+p_hat <- p_hat$count_physical_3plus
+
+#calculate the standard error
+SE_proportion <- sqrt(p_hat*(1-p_hat)/n)
+
+#calculate the confidence interval
+t_critical = qt(0.975, n - 1 )
+lower_bound <- p_hat - t_critical*SE_proportion
+higher_bound <- p_hat + t_critical*SE_proportion
+
 #Plotting boxplot of weight and physical activity atleast 3 days
 yrbss %>%
-drop_na(physical_3plus) %>%
-ggplot(aes(x=physical_3plus, y=weight))+
-geom_boxplot()+
-theme_bw() +
+  drop_na(physical_3plus) %>%
+  ggplot(aes(x=physical_3plus, y=weight))+
+  geom_boxplot()+
+  theme_bw() +
   labs (
-    title = "Boxplot of weight vs physical activity", x="Phsyical activity atleast 3 days", y = "Weight"
+  title = "Boxplot of weight vs physical activity", x="Phsyical activity atleast 3 days", y = "Weight"
   )
 
-#confidence interval calculation
-n= count_yesorno[1,2]+count_yesorno[2,2]
-n
+#as a small sanity check we check the age statistics and calculate a few metrics
+yrbss %>%
+  drop_na(physical_3plus, weight, age) %>%
+  group_by(physical_3plus) %>% 
+  summarise(mean = mean(weight),
+            median = median(weight),
+            mean_age = mean(age),
+            median_age = median(age)
+            )
+yrbss %>%
+  drop_na(physical_3plus) %>%
+  ggplot(aes(x=physically_active_7d, y=weight))+
+  geom_point()+
+  geom_lm() +
+  theme_bw() +
+  labs (
+  title = "Lineplot of weight vs physical activity", x="Phsyical activity in 7 days", y = "Weight"
+  )
 
-p_hat = count_yesorno[1,2]/(count_yesorno[1,2]+count_yesorno[2,2])
-p_hat = as.vector(p_hat)
-p_hat
-
-one_df <- data.frame(1)
-one_df
-
-one_minus_p_hat = one_df - p_hat
-one_minus_p_hat
-
-numerator= sqrt(p_hat*(one_minus_p_hat))
-numerator
-
-s= numerator[1,1] / n[1,1]
-s
-
-two_sd <- data.frame(1.96)
-
-CI1 = p_hat- (two_sd * s)
 ```
 
 ## Confidence Interval
@@ -180,29 +185,8 @@ CI1 = p_hat- (two_sd * s)
 Boxplots show how the medians of the two distributions compare, but we can also compare the means of the distributions using either a confidence interval or a hypothesis test. Note that when we calculate the mean, SD, etc. weight in these groups using the mean function, we must ignore any missing values by setting the `na.rm = TRUE`.
 
 ```{r, ci_using_formulas}
-#confidence interval calculation
-n= count_yesorno[1,2]+count_yesorno[2,2]
-n
+#confidence interval calculation for the physically
 
-p_hat = count_yesorno[1,2]/(count_yesorno[1,2]+count_yesorno[2,2])
-p_hat = as.vector(p_hat)
-p_hat
-
-one_df <- data.frame(1)
-one_df
-
-one_minus_p_hat = one_df - p_hat
-one_minus_p_hat
-
-numerator= sqrt(p_hat*(one_minus_p_hat))
-numerator
-
-s= numerator[1,1] / n[1,1]
-s
-
-two_sd <- data.frame(1.96)
-
-CI1 = p_hat- (two_sd * s)
 
 ```
 
@@ -216,8 +200,8 @@ Write the null and alternative hypotheses for testing whether mean weights are d
 
 t.test(weight ~ physical_3plus, data = yrbss)
 ```
-Let x_bar_yes be the mean of students who exercise atleast 3 times a week. Let x_bar_no be the mean of students who exercise less than 3 times a week. We will define our null hypothesis as x_bar_yes - x_bar_no = 0. If the null hypothesis is true, it would signify that weight does not depend on exercise. Our alternative hypothesis would be that x_bar_yes != x_bar no. This would mean there is a relation between weight and exercise.
 
+Let x_bar_yes be the mean of students who exercise atleast 3 times a week. Let x_bar_no be the mean of students who exercise less than 3 times a week. We will define our null hypothesis as x_bar_yes - x_bar_no = 0. If the null hypothesis is true, it would signify that weight does not depend on exercise. Our alternative hypothesis would be that x_bar_yes != x_bar no. This would mean there is a relation between weight and exercise.
 
 ## Hypothesis test with `infer`
 
