@@ -64,9 +64,21 @@ Before you carry on with your analysis, it's is always a good idea to check with
 
 You will first start with analyzing the `weight` of participants in kilograms. Using visualization and summary statistics, describe the distribution of weights. How many observations are we missing weights from?
 
+[**NOTE AND ANSWER:**]{.underline}
+
+We have 1004 missing values in weight. The lowest weight is 30kgs and highest weight is 181 kgs. The mean weight of the class is 68kgs and median weight is 64kgs. We can see that Q3 is 76kgs. That means 75% of the weights are between 30kgs and 76kgs. As per the histogram, it's clear that the remaining 25% of the data is really spread between 76kgs and 181kgs. This is evident in the skewness of the graph. It is right skewed and mean is larger than the median. It gives us an indication that there are some outliers that have increased the value of the mean.
+
 ```{r, eda_on_weight}
 #Understanding the data
 skimr::skim(yrbss)
+<<<<<<< HEAD
+=======
+
+yrbss%>%
+  summarise(count_na_weight = sum(is.na(weight)))
+# 1004 observations with missing weight
+
+>>>>>>> 6aa9ebba6a96a3922f7175be48306630fc3cb0b2
 summary(yrbss)
 
 #Plotting histogram of weight
@@ -80,34 +92,50 @@ yrbss %>%
 
 ```
 
+Next, consider the possible relationship between a high schooler's weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
+
+Let's create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. Use the `count()` function and see if you get the same results as `group_by()... summarise()`
+
 <<<<<<< HEAD
-We have 1004 missing values in weight.  The lowest weight is 30kgs and highest weight is 181 kgs. The mean weight of the class is 68kgs and median weight is 64kgs. We can see that Q3 is 76kgs. That means 75% of the weights are between 30kgs and 76kgs. As per the histogram, it's clear that the remaining 25% of the data is really spread between 76kgs and 181kgs. This is evident in the skewness of the graph. It is right skewed and mean is larger than the median. It gives us an indication that there are some outliers that have increased the value of the mean. 
-
-
 Next, consider the possible relationship between a high schooler’s weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
 
 Let’s create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. Use the `count()` function and see if you get the same results as `group_by()... summarise()`
 
   
 =======
+=======
+>>>>>>> 6aa9ebba6a96a3922f7175be48306630fc3cb0b2
 Next, consider the possible relationship between a high schooler's weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
 
 Let's create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. You may also want to calculate the number and % of those who are and are not active for more than 3 days. RUse the `count()` function and see if you get the same results as `group_by()... summarise()`
 
->>>>>>> 569dfad99f8914a56253cd2b8ac8839faed24e9c
 ```{r, mutate_and_count}
+<<<<<<< HEAD
 
 #Adding a new column to represent those who do physical activity for atleast 3 days a week
 yrbss <- yrbss %>%
     mutate( physical_3plus = ifelse(physically_active_7d>3, "Yes","No"))
 
 yrbss
+=======
+
+#Adding a new column to represent those who do physical activity for atleast 3 days a week
+yrbss <- yrbss %>%
+  mutate(physical_3plus = ifelse(physically_active_7d >=3, "yes", "no"))
+  
+>>>>>>> 6aa9ebba6a96a3922f7175be48306630fc3cb0b2
 
 #Counting number of yes and no using groupby and summarise
 count_yesorno <- yrbss %>%
   drop_na(physical_3plus) %>%
   group_by(physical_3plus) %>%
   summarize( count_physical_3plus = n())%>%
+<<<<<<< HEAD
+=======
+
+  mutate(frequency = count_physical_3plus / sum(count_physical_3plus), frequency = parse_number(scales::percent(frequency)))
+
+>>>>>>> 6aa9ebba6a96a3922f7175be48306630fc3cb0b2
   mutate(percentage = count_physical_3plus / sum(count_physical_3plus), percentage = parse_number(scales::percent(percentage)))
 
 count_yesorno
@@ -117,8 +145,11 @@ yrbss %>%
   drop_na(physical_3plus) %>%
   count(physical_3plus)
     
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 6aa9ebba6a96a3922f7175be48306630fc3cb0b2
 ```
 
 Can you provide a 95% confidence interval for the population proportion of high schools that are *NOT* active 3 or more days per week?
@@ -126,6 +157,7 @@ Can you provide a 95% confidence interval for the population proportion of high 
 Make a boxplot of `physical_3plus` vs. `weight`. Is there a relationship between these two variables? What did you expect and why?
 
 ```{r, boxplot}
+<<<<<<< HEAD
 #Plotting boxplot of weight and physical activity atleast 3 days
 yrbss %>%
 drop_na(physical_3plus) %>%
@@ -136,6 +168,31 @@ theme_bw() +
     title = "Boxplot of weight vs physical activity", x="Phsyical activity atleast 3 days", y = "Weight"
   )
 
+=======
+#confidence interval calculation
+n= count_yesorno[1,2]+count_yesorno[2,2]
+n
+
+p_hat = count_yesorno[1,2]/(count_yesorno[1,2]+count_yesorno[2,2])
+p_hat = as.vector(p_hat)
+p_hat
+
+one_df <- data.frame(1)
+one_df
+
+one_minus_p_hat = one_df - p_hat
+one_minus_p_hat
+
+numerator= sqrt(p_hat*(one_minus_p_hat))
+numerator
+
+s= numerator[1,1] / n[1,1]
+s
+
+two_sd <- data.frame(1.96)
+
+CI1 = p_hat- (two_sd * s)
+>>>>>>> 6aa9ebba6a96a3922f7175be48306630fc3cb0b2
 ```
 
 ## Confidence Interval
@@ -267,8 +324,86 @@ glimpse(movies)
 
 Your R code and analysis should go here. If you want to insert a blank chunk of R code you can just hit `Ctrl/Cmd+Alt+I`
 
-```{r}
+```{r plot}
 
+# To get the cleaned data
+# We did not clean duplicate titles (this results in a plot that is same as what is shown above)
+movies_cleaned <- movies %>%
+   drop_na(rating) 
+
+# Define list with directors of interest
+moviedirectors <- c("Tim Burton", "Steven Spielberg")
+
+filteredmovies <- movies_cleaned %>%
+  filter(director %in% moviedirectors) %>%
+  group_by(director) %>% 
+    summarise(mean_rating = mean(rating),
+              sd_rating = sd(rating),
+              count = n(),
+              t_critical = qt(0.95,count - 1),
+              se_rating = sd_rating / sqrt(count),
+              margin_of_error = t_critical*se_rating, 
+              rating_low = mean_rating-margin_of_error,
+              rating_high = mean_rating+margin_of_error,
+              director = first(director), n = n()
+            )
+
+#to plot
+ggplot(filteredmovies, aes(x = mean_rating, y = director, color = director)) +
+  geom_point(size = 2.5, show.legend = FALSE)+
+  geom_errorbarh(aes(y = director,xmin = rating_low, xmax = rating_high, color = director), height = 0.2, size = 1, show.legend = FALSE)+
+  geom_rect(aes(xmin = movies1$rating_low[[1]],xmax = movies1$rating_high[[2]], ymin = -Inf, ymax = Inf),color = NA, alpha = 0.3, show.legend = FALSE)+
+  theme_bw() +
+  ggrepel::geom_text_repel(aes(label = round(mean_rating, 2)), show.legend = FALSE) +
+  labs(y = NULL, x = "Mean IMDB Rating", title = "Do Spielberg and Burton have the same mean IMDB ratings?", subtitle = "95% confidence invertals overlap")+
+  theme(title = element_text(size = 8))+
+  theme(legend.position = "none")
+
+
+
+#There are 2 problems
+#1)I do not know how to add labels of value to the point I drew(including the points of confidence Interval)
+#2) I don't know how to let Steven's ratings to be located above
+```
+
+```{r t_test}
+library(infer)
+directorlist <- c("Steven Spielberg", "Tim Burton")
+
+# Direct t-test
+movies_cleaned %>% 
+filter(director %in% directorlist) %>%   
+t.test(rating ~ director, data = .)
+
+# Create obs_diff statistic
+movies_obs_diff <- movies_cleaned %>%
+  filter(director %in% directorlist) %>% 
+  drop_na(rating) %>%
+  specify(rating~director) %>%
+  calculate(stat = "diff in means", order = c("Steven Spielberg", "Tim Burton"))
+
+# Create null distribution
+set.seed(1234)
+movies_null_distribution <- movies_cleaned %>%
+  filter(director %in% directorlist) %>%
+  drop_na(rating) %>% 
+  # specify variables
+  specify(rating~director) %>%
+  # assume independence, i.e, there is no difference
+  hypothesize(null = "independence") %>%
+  # generate 1000 reps, of type "permute"
+  generate(reps = 1000, type = "permute") %>% 
+  # calculate statistic of difference, namely "diff in means"
+  calculate(stat = "diff in means", order = c("Steven Spielberg","Tim Burton"))
+
+
+# Visualise null distribution and observed stat 
+movies_null_distribution %>% visualize() +
+  shade_p_value(obs_stat = movies_obs_diff, direction = "two-sided")
+
+# Dervive p-value using get_p_value function
+movies_null_distribution %>%
+  get_p_value(obs_stat = movies_obs_diff, direction = "two_sided")
 ```
 
 # Omega Group plc- Pay Discrimination
@@ -373,7 +508,7 @@ skim(brexit_results)
 #we want to have an overview of how the percentage of the party affilitation is related to the percentage in the brexit voting share. Therefore, we want to create a long table that displays the voting percentage per parliament constituency
 
 #only select the most important information
-plot_df <- brexit_results %>% 
+brexit_results_plot_df <- brexit_results %>% 
   select(-c(born_in_uk, male, unemployed, degree, age_18to24)) %>% 
   #create a longer format dataset
   rename (Conservative = con_2015,
@@ -384,7 +519,7 @@ plot_df <- brexit_results %>%
                names_to = "Party",
                values_to = "Party_share")
 
-ggplot(data = plot_df, aes(x = Party_share, y = leave_share, colour = Party)) +
+ggplot(data = brexit_results_plot_df, aes(x = Party_share, y = leave_share, colour = Party)) +
   geom_point(size = 0.2) + 
   geom_lm(interval = "confidence") +
   scale_colour_manual(values = c("#0087DC", "#E4003B", "#FAA61A", "#6D3177"), name="") +
@@ -423,7 +558,7 @@ The first thing you need to do is to tidy the data, as it is in wide format and 
 
 > make sure you remove `eval=FALSE` from the next chunk of R code-- I have it there so I could knit the document
 
-```{r reshape_GDP_data, eval=FALSE}
+```{r reshape_GDP_data}
 
 # Create long form data
 tidy_GDP_data <- UN_GDP_data %>%
@@ -501,12 +636,6 @@ Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*),
 
 > What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?
 
-```{r gdp2, echo=FALSE, out.width="100%"}
-knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
-```
-
-> What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?
-
 ```{r gdp2 replicate}
 
 variables_of_interest2 <- c("GCF", "EGAS", "GGFCE", "HCE", "IGAS","GDP")
@@ -548,9 +677,37 @@ ggplot(manual_GDP_df, aes(x = Year, y = Values, group = Ind_id, colour = factor(
   
 ```
 
+[**NOTE:**]{.underline}
+
+As the graphs show, there is a small, but undeniable difference between the sum of all GDP components and the UN reported total GDP value. This might be surprising at first, but as clarified earlier, the calculation of the GDP as the sum of government spending, consumption, investments plus the net exports is rather of a simplistic nature. Simultaneously, it is very difficult to estimate the exact values for each individual component of GDP. We believe that in order to calculate the various components, the UN might have used adjusted values for a better estimate. Similarly, to not be effected by the many assumptions made to calculate the individual components, the UN might have opted to extrapolate the GDP total value based on a different, more rigorous approach.
+
+The graphs do hint at another anomaly. There is a clear difference between the countries in terms of the accuracy of the sum of GDP's components and the UN's reported GDP value. Whilst it seems as if the values for Germany and the United Stated have aligned with the reported GDP amount, the GDP estimate for India remains different until the present day. This might be down to the relatively high quality of data for Germany's and the USA's economy as opposed to the data on India's economy. Therefore, the UN might have been forced to fall back on assumptions and estimations that lead to less accurate representations of the true values.
+
+```{r gdp2, out.width="100%"}
+knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
+```
+
 > What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?
 
+These graphs depict some noteworthy differences, similarities and trends. For all three countries, though very different, there is a strong tendency for the trade balance/ net exports to play a small part in the the countries GDP share. However, this does not imply that there are not significant differences in the magnitude of the im- and exports between these countries. Though, it does hint at the fact that despite all three countries having a strong industry (India's natural resources and tech sector, Germany's automobile and chemical industry and USA's oil and automobile sector) all strongly depend on foreign goods to cover their domestic demand. Therefore the net exports' GDP share are almost negligible. Only Germany, who has been up-scaling their exporting of automobiles to eastern countries and especially China has been realizing a positively developing share of net exports.
+
+In the meantime, household spending makes up the largest share of GDP for all countries around the 60% mark. While Germany and the USA have been steady in this area for the last few decades, India has realized a 15% drop in its share. This might be down to an increasing share of household finances being used to spend on foreign goods as the middle class in India grows. Another explanation might be that through the relatively stronger increase in other components of the GDP the household expenditures' share decreases a result.
+
+The investments in India are an exemplary increase that might have caused the share of household expenditures to decrease. India's size and resources make it an interesting trade partner for many other global powers and throughout the last 20 years India has felt an increasing investment in its country. This is observable in especially its tech sector and infrastructure. The growth of companies such as SPAN Infotech and Tata as well foreign investment by China through its silk road initiative are driving forces in this trend.
+
+The government expenditure on the other hand is relatively low in India. USA and Germany have witnessed around 10% higher government expenditure relative to their GDP, as they have more established governmental structures and tax systems as well as social benefit systems that allow as well as require for higher relative government expenditure, respectively.
+
 > If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
+
+```{r gdp2, out.width="100%"}
+knitr::include_graphics(here::here("Rplot.png"), error = FALSE)
+```
+
+The countries above have been chosen based on some of the nationalities of our group members.
+
+The first observation is that the differences between the Netherlands and Germany are close to non-existent. Not only are the components' shares similar, but the tends over the last 50 years are remarkably close: The share of net exports have been steadily increasing from around 0% to 10%, the government expenditure and gross capital formation have been around the 20 % mark and household expenditures have been steadily decreasing. This is where the only notable difference between the two countries lies and as the share of GDP based on household expenditures has been consistently 5-10 percentage points lower in the Dutch as opposed to the German economy.
+
+The share distribution of the components for China are very much different to what could be observed for the two western European countries. The largest differences are in the share of government expenditure, gross capital formation and household expenditure. While the level of government expenditure is consistently lower than for its European counterparts, China's GDP share of investment and household expenditure seem to have traded shares over the last 5 decades with investments on the rise especially in the last 20 years and the GDP share of household expenditures almost falling 20 percentage points. It is no groundbreaking finding, that China's level of investments, both domestic and international has skyrocketed in the last 20 years, but the magnitude is astonishing. Especially considering the ever growing wealth and middle class in China would hint at the fact that household expenditures should increase tremendously. Yet still, investments in China strongly out way this trend as China has grown to be a country with among the fastest growing infrastructure and conglomerates.
 
 # Deliverables
 
